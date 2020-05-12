@@ -1,4 +1,6 @@
 import { Base } from "base/base";
+import { BasicHarvestTask } from "tasks/basic_harvest_task";
+import { BasicUpgradeTask } from "tasks/basic_upgrade_task";
 import { ResourceRequester } from "resources/resource_requester";
 import { Task } from "tasks/task";
 import { TasksDeserialize } from "tasks/tasks_deserialize";
@@ -8,8 +10,18 @@ export class StarterBase implements Base {
 	private tasks: Array<Task>;
 
 	static CreateStarterBase(): StarterBase {
-		const requester = ResourceRequester.fromSpawn(Game.spawns[Object.keys(Game.spawns)[0]]);
-		return new StarterBase(requester, []);
+		const firstSpawn = Game.spawns[Object.keys(Game.spawns)[0]];
+		const requester = ResourceRequester.fromSpawn(firstSpawn);
+		const closestSource = firstSpawn.pos.findClosestByPath(FIND_SOURCES);
+		const controller = firstSpawn.room.controller;
+		if (!controller || !closestSource) {
+			throw "Cannot create starter base, missing controller or source";
+		}
+		const tasks = [
+			BasicHarvestTask.createNewTask(requester, closestSource, firstSpawn),
+			BasicUpgradeTask.createNewTask(requester, closestSource, controller)
+		];
+		return new StarterBase(requester, tasks);
 	}
 
 	constructor(requester: ResourceRequester, tasks: Array<Task>) {
@@ -21,8 +33,22 @@ export class StarterBase implements Base {
 		console.log('Running starter base');
 	}
 
-	public static deserialize(memory: StarterBaseMemory): StarterBase {
+	public processResourceRequests(): void {
+		this.requester.processRequests();
+	}
+
+	public static deserialize(mem: StarterBaseMemory): StarterBase {
 		// TODO: CHANGE THIS
-		return StarterBase.CreateStarterBase();
+		const requester = ResourceRequester.deserialize(mem.resource_requester);
+		const tasks = mem.tasks.map(taskMem => TasksDeserialize.deserialize(taskMem));
+		return new StarterBase(requester, tasks);
+	}
+
+	public serialize(): StarterBaseMemory {
+		return {
+			kind: BaseKind.StarterBase,
+			resource_requester: this.requester.serialize(),
+			tasks: this.tasks.map(task => task.serialize()),
+		};
 	}
 }

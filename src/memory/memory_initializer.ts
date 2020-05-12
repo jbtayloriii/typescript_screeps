@@ -23,10 +23,8 @@ export class MemoryInitializer {
 		if (!Memory.spawns) {
 			Memory.spawns = {};
 		}
-		if (!Memory.headquarters) {
-			Memory.headquarters = {
-				bases: {}
-			};
+		if (!Memory.bases) {
+			Memory.bases = {};
 		}
 		Memory.globalId = 1;
 

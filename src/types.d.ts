@@ -1,11 +1,16 @@
-declare var global: any;
 
 interface Memory {
+	// Handled by memory/memory_initializer
   	current_memory_version: string;
+
+  	// Handled by utils/id_util
 	globalId: number;
+
+	// Handled by headquarters
 	bases: { [baseId: string]: BaseMemory };
+
+	// Handled by resources/contract_manager
 	contracts: Array<ContractMemory>;
-	headquarters: HeadquartersMemory;
 }
 
 //
@@ -26,9 +31,9 @@ interface StarterBaseMemory extends BaseMemory {
 	tasks: TaskMemory[];
 }
 
-//
+//////////////
 // Task Memory
-//
+//////////////
 
 const enum TaskKind {
 	Unknown,
@@ -40,26 +45,48 @@ interface TaskMemory {
 	kind: TaskKind;
 }
 
-interface BasicHarvestTaskMemory {
+interface BasicHarvestTaskMemory extends TaskMemory {
 	kind: TaskKind.BasicHarvestTask;
+	contractId: string;
+	currentState: number;
+	sourceId: string;
+	spawnId: string;
 }
 
-interface BasicUpgradeTaskMemory {
+interface BasicUpgradeTaskMemory extends TaskMemory {
 	kind: TaskKind.BasicUpgradeTask;
 	contractId: string;
 	currentState: number;
+	sourceId: string;
+	controllerId: string;
 }
 
-// Other uncategorized stuff
+//
+// Contract memory
+//
 
-interface RoomMemory {
+const enum ContractKind {
+	Unknown,
+	CreepContract,
 }
 
-interface HeadquartersMemory {
-	bases: { [baseId: string]: BaseMemory };
+interface ContractMemory {
+	kind: ContractKind;
+	id: string;	
 }
 
-interface CreepContractMemory {
-	id: string;
+
+interface CreepContractMemory extends ContractMemory {
+	kind: ContractKind.CreepContract;
+	body: Array<BodyPartConstant>;
 	creepId: string | null;
+}
+
+/////////////////////////////
+// Other uncategorized memory
+/////////////////////////////
+
+interface ResourceRequesterMemory {
+	contractIds: string[];
+	spawnIds: string[];
 }

@@ -16,14 +16,17 @@ export class Headquarters {
 			this.bases.push(StarterBase.CreateStarterBase());
 		}
 	}
+	public processResourceRequests(): void {
+		this.bases.forEach(base => base.processResourceRequests());
+	}
 
 	public static deserialize(): Headquarters {
-		if (!Memory.headquarters || !Memory.headquarters.bases) {
+		if (!Memory.bases) {
 			throw "Cannot initialize HQ without memory structure."; 
 		}
 		const bases: Array<Base> = [];
-		for (let baseId in Memory.headquarters.bases) {
-			bases.push(Bases.deserializeBase(Memory.headquarters.bases[baseId]));
+		for (let baseId in Memory.bases) {
+			bases.push(Bases.deserializeBase(Memory.bases[baseId]));
 		}
 		return new Headquarters(bases);
 	}
@@ -32,5 +35,9 @@ export class Headquarters {
 		for (const base of this.bases) {
 			base.run();
 		}
+	}
+
+	public serialize(): void {
+		this.bases.forEach((base) => base.serialize());
 	}
 }
