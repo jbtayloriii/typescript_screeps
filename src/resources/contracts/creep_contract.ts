@@ -4,11 +4,13 @@ export class CreepContract implements Contract {
 	private id: string;
 	private body: Array<BodyPartConstant>;
 	private creep: Creep | null;
+	private creepId: string;
 
-	constructor(id: string, body: Array<BodyPartConstant>, creep: Creep | null) {
+	constructor(id: string, body: Array<BodyPartConstant>, creep: Creep | null, creepId: string) {
 		this.id = id;
 		this.body = body;
 		this.creep = creep;
+		this.creepId = creepId;
 	}
 
 	public hasCreep(): boolean {
@@ -27,12 +29,16 @@ export class CreepContract implements Contract {
 		return this.body;
 	}
 
+	public getCreepId(): string {
+		return this.creepId;
+	}
+
 	public serialize(): CreepContractMemory {
 		return {
 			kind: ContractKind.CreepContract,
 			id: this.id,
 			body: this.body,
-			creepId: this.creep === null ? null : this.creep.id,
+			creepId: this.creepId,
 		};
 	}
 
@@ -41,7 +47,7 @@ export class CreepContract implements Contract {
 	}
 
 	public static deserialize(memory: CreepContractMemory): CreepContract {
-		const creep = memory.creepId === null ? null : Game.getObjectById(memory.creepId) as Creep;
-		return new CreepContract(memory.id, memory.body, creep);
+		const creep = memory.creepId in Game.creeps ? Game.creeps[memory.creepId] : null;
+		return new CreepContract(memory.id, memory.body, creep, memory.creepId);
 	}
 }

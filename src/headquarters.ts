@@ -25,8 +25,8 @@ export class Headquarters {
 			throw "Cannot initialize HQ without memory structure."; 
 		}
 		const bases: Array<Base> = [];
-		for (let baseId in Memory.bases) {
-			bases.push(Bases.deserializeBase(Memory.bases[baseId]));
+		for (let baseMem of Memory.bases) {
+			bases.push(Bases.deserializeBase(baseMem));
 		}
 		return new Headquarters(bases);
 	}
@@ -38,6 +38,6 @@ export class Headquarters {
 	}
 
 	public serialize(): void {
-		this.bases.forEach((base) => base.serialize());
+		Memory.bases = this.bases.map(base => base.serialize());
 	}
 }

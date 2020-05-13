@@ -53,6 +53,7 @@ export class BasicHarvestTask {
 		const creep = this.creepContract.getCreep();
 		if (creep === null) {
 			this.currentState = CurrentState.New;
+			console.log('BasicHarvestTask: Doing nothing, no creep');
 			return;
 		}
 
@@ -79,7 +80,7 @@ export class BasicHarvestTask {
 
 				// TODO: cached path
 				if (transferCode === ERR_NOT_IN_RANGE) {
-					creep.moveTo(this.source);
+					creep.moveTo(this.spawn);
 				}
 			}
 		}

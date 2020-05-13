@@ -1,11 +1,11 @@
 
 /** Current version of memory, used to determine if we should check for top level memory changes. */
-export const CURRENT_MEMORY_VERSION = "2";
+export const CURRENT_MEMORY_VERSION = 5;
 
 /** Static helper for initializing top level memory. */
 export class MemoryInitializer {
 	static shouldReboot(): boolean {
-		if (!Memory.current_memory_version || Memory.current_memory_version != CURRENT_MEMORY_VERSION) {
+		if (!Memory.current_memory_version || Memory.current_memory_version !== CURRENT_MEMORY_VERSION) {
 			return true;
 		}
 		return false;
@@ -24,7 +24,10 @@ export class MemoryInitializer {
 			Memory.spawns = {};
 		}
 		if (!Memory.bases) {
-			Memory.bases = {};
+			Memory.bases = [];
+		}
+		if (!Memory.contracts) {
+			Memory.contracts = [];
 		}
 		Memory.globalId = 1;
 

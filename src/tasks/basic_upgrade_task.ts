@@ -53,6 +53,7 @@ export class BasicUpgradeTask implements Task {
 		const creep = this.creepContract.getCreep();
 		if (creep === null) {
 			this.currentState = CurrentState.New;
+			console.log('BasicUpgradeTask: Doing nothing, no creep');
 			return;
 		}
 

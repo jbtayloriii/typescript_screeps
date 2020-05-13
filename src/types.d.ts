@@ -1,13 +1,13 @@
 
 interface Memory {
 	// Handled by memory/memory_initializer
-  	current_memory_version: string;
+  	current_memory_version: number;
 
   	// Handled by utils/id_util
 	globalId: number;
 
 	// Handled by headquarters
-	bases: { [baseId: string]: BaseMemory };
+	bases: Array<BaseMemory>;
 
 	// Handled by resources/contract_manager
 	contracts: Array<ContractMemory>;
@@ -79,7 +79,7 @@ interface ContractMemory {
 interface CreepContractMemory extends ContractMemory {
 	kind: ContractKind.CreepContract;
 	body: Array<BodyPartConstant>;
-	creepId: string | null;
+	creepId: string;
 }
 
 /////////////////////////////

@@ -16,8 +16,11 @@ export class ResourceRequester {
 		return new ResourceRequester([spawn], []);
 	}
 
+	// TODO: add priorities
 	public requestCreep(body:Array<BodyPartConstant>, priority: number): CreepContract {
-		let creepContract = new CreepContract(global.idUtil.createId(), body, null);
+		let creepContract = global.contractManager.createCreepContract(body);
+
+		new CreepContract(global.idUtil.createId(), body, null, global.idUtil.createId());
 		this.contracts.push(creepContract);
 		return creepContract;
 	}
@@ -25,20 +28,21 @@ export class ResourceRequester {
 	public processRequests(): void {
 		// TODO: make this a priority queue, not FIFO
 		// TODO: Make this more robust than using first spawn
-		if (this.contracts.length > 0 && this.spawns.length > 0 && this.spawns[0].spawning === null) {
-			this.spawns[0].spawnCreep(this.contracts[0].getBody(), global.idUtil.createId());
+		if (this.contracts.length === 0) {
+			return;
 		}
-
-		if (Game.creeps[this.contracts[0].getId()]) {
-			console.log('Creep created, removing contract.');
-			this.contracts.shift();
+		const creepId = this.contracts[0].getCreepId();
+		if (this.contracts.length > 0 && this.spawns.length > 0 && this.spawns[0].spawning === null) {
+			if (this.spawns[0].spawnCreep(this.contracts[0].getBody(), creepId) === OK) {
+				this.contracts.shift();
+			}
 		}
 
 	}
 
 	public static deserialize(mem: ResourceRequesterMemory): ResourceRequester {
 		const spawns = mem.spawnIds.map(spawnId => Game.getObjectById(spawnId) as StructureSpawn);
-		const contracts = mem.contractIds.map(contractId => global.contractManager.getCreepContract());
+		const contracts = mem.contractIds.map(contractId => global.contractManager.getCreepContract(contractId));
 		return new ResourceRequester(spawns, contracts);
 	} 
 

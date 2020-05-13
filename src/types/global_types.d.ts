@@ -1,9 +1,17 @@
-declare var global: {
-	// TODO: interfaces so we can strongly type
-	contractManager: any; // IContractManager;
-	idUtil: IIdUtil;
-	hq: IHeadquarters;
-};
+declare var global: any;
+
+declare namespace NodeJS {
+	interface Global {
+		hq: IHeadquarters
+	}
+}
+
+// declare var global: {
+// 	// TODO: interfaces so we can strongly type
+// 	contractManager: any; // IContractManager;
+// 	idUtil: IIdUtil;
+// 	hq: IHeadquarters;
+// };
 
 interface IIdUtil {
 	getCurrentId(): number;

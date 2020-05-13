@@ -30,7 +30,9 @@ export class StarterBase implements Base {
 	}
 
 	public run(): void {
-		console.log('Running starter base');
+		for (const task of this.tasks) {
+			task.execute();
+		}
 	}
 
 	public processResourceRequests(): void {
